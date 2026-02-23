@@ -1,30 +1,249 @@
+# Secure API Platform using Kong on Kubernetes
 
-# Secure API Platform
+------------------------------------------------------------------------
+
+## Overview
+
+This project implements a secure internal API platform running on
+Kubernetes using Kong Gateway with Envoy as an edge/proxy layer.
+
+It demonstrates:
+
+-   JWT-based authentication
+-   IP-based rate limiting
+-   IP whitelisting
+-   Authentication bypass for selected endpoints
+-   Custom Lua logic
+
+------------------------------------------------------------------------
 
 ## Architecture
 
-Client → Kong (JWT + RateLimit + IP Restrict + Custom Lua) → User Service → SQLite
+Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
 
-## Features
+------------------------------------------------------------------------
 
-- Auto DB bootstrap
-- Auto admin creation
-- JWT authentication
-- Public route bypass
-- Rate limiting
-- IP restriction
-- Custom Lua header injection
-- Helm ready
-- Kubernetes ready
-- Terraform ready
+## Components
 
-## Build Docker
+-   **Envoy**: Edge proxy for connection management and basic traffic
+    controls
+-   **Kong Gateway**: API Gateway
+-   **User Microservice**: /login, /verify, /users, /health endpoints
+-   **SQLite**: Local database
+-   **Helm**: Deploy microservice and Kong declaratively
 
-eval $(minikube docker-env)
-cd microservice
+------------------------------------------------------------------------
+
+## Repo Structure
+
+    ├── ai-usage.md
+    ├── helm
+    │   ├── envoy-chart
+    │   │   ├── Chart.yaml
+    │   │   ├── templates
+    │   │   │   ├── configmap.yaml
+    │   │   │   ├── deployment.yaml
+    │   │   │   └── service.yaml
+    │   │   └── values.yaml
+    │   ├── kong
+    │   │   ├── header_check.lua
+    │   │   ├── kong.yaml
+    │   │   ├── plugins
+    │   │   │   └── custom
+    │   │   │       ├── handler.lua
+    │   │   │       └── schema.lua
+    │   │   └── values.yaml
+    │   ├── old_version_kong
+    │   │   ├── kong.yaml
+    │   │   ├── plugins
+    │   │   │   └── custom
+    │   │   │       ├── handler.lua
+    │   │   │       └── schema.lua
+    │   │   └── values.yaml
+    │   └── user-service
+    │       ├── Chart.yaml
+    │       ├── templates
+    │       │   ├── deployment.yaml
+    │       │   ├── _helpers.tpl
+    │       │   └── service.yaml
+    │       └── values.yaml
+    ├── k8s
+    │   ├── deployment.yaml
+    │   ├── envoy
+    │   │   ├── deploy.yaml
+    │   │   └── envoy.yaml
+    │   └── mod
+    │       ├── modsecurity-config.yaml
+    │       ├── waf-deployment.yaml
+    │       └── waf-service.yaml
+    ├── kong
+    │   ├── kong.yaml
+    │   └── plugins
+    │       └── custom.lua
+    ├── microservice
+    │   ├── app
+    │   │   ├── auth.py
+    │   │   ├── db.py
+    │   │   ├── main.py
+    │   │   └── requirements.txt
+    │   ├── backup
+    │   │   ├── app
+    │   │   │   ├── auth.py
+    │   │   │   ├── db.py
+    │   │   │   ├── main.py
+    │   │   │   └── requirements.txt
+    │   │   └── Dockerfile
+    │   └── Dockerfile
+    ├── README.md
+    └── terraform
+        └── main.tf
+
+------------------------------------------------------------------------
+
+## What is Envoy?
+
+Envoy is an open-source, high-performance edge and service proxy
+designed for cloud-native applications. It sits between clients and
+services to manage, observe, and secure traffic.
+
+### Key Features
+
+-   Traffic management: Load balancing, retries, rate limiting, circuit
+    breaking
+-   Security: TLS termination, connection limits, IP-based controls
+-   Observability: Metrics, logging, distributed tracing
+-   Cloud-native: Works well with Kubernetes and integrates with API
+    gateways like Kong
+
+Envoy acts as the edge proxy, handling connection-level traffic control
+and rate limits before requests reach Kong.
+
+------------------------------------------------------------------------
+
+## What is Kong?
+
+Kong is an open-source API Gateway that secures, manages, and routes API
+traffic.
+
+It provides:
+
+-   JWT authentication
+-   Rate limiting
+-   IP whitelisting
+-   Custom plugins for logging or request manipulation
+
+In this project, Kong sits behind Envoy to protect and manage access to
+the microservice APIs.
+
+------------------------------------------------------------------------
+
+## User Microservice
+
+Tech Stack: FastAPI, SQLite database inside the container.
+
+In this Microservice, we have deployed the total 4 APIs:
+
+-   /health
+-   /verify
+-   /login
+-   /users
+
+/login is protected and it is required the user and password to get
+authenticated.
+
+/users also comes under protection and it requires the Token to complete
+the validation and get the values from user-service.
+
+------------------------------------------------------------------------
+
+## Kong Plugin Information
+
+### Rate-Limiting Plugin
+
+This Kong plugin enforces IP-based rate limiting, allowing a maximum of
+10 requests per minute per client IP.
+
+``` yaml
+- name: rate-limiting
+  config:
+    minute: 10
+    policy: local
+    limit_by: ip
+```
+
+### Kong IP Restriction
+
+``` yaml
+- name: ip-restriction
+  config:
+    allow:
+      - 192.168.49.0/24
+      - 10.244.0.67/24
+```
+
+------------------------------------------------------------------------
+
+## Envoy Connection Limit
+
+``` yaml
+max_connections: 50
+```
+
+------------------------------------------------------------------------
+
+## Helm Deployment Commands
+
+### Build Microservice Docker Image
+
+``` bash
 docker build -t user-service:latest .
+```
 
-## Deploy
+### Install User Service
 
-helm install user-service ./helm/user-service
-helm install kong ./helm/kong
+``` bash
+helm install user-service .
+```
+
+### Deploy Kong
+
+``` bash
+helm upgrade kong kong/kong -f values.yaml --set jwtSecret=admin123
+```
+
+### Deploy Envoy
+
+``` bash
+helm upgrade --install envoy ./envoy-chart   --namespace default   --set service.nodePort=31001   --set replicaCount=1
+```
+
+------------------------------------------------------------------------
+
+## Test Commands
+
+``` bash
+curl -i http://192.168.58.2:32101/health
+curl -i http://192.168.58.2:32101/verify
+```
+
+``` bash
+curl -s -X POST http://192.168.58.2:32101/login   -H "Content-Type: application/json"   -d '{"username":"admin","password":"admin123"}'
+```
+
+``` bash
+curl -i http://192.168.58.2:32504/users   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3MTg0ODY2Nn0.WEdqM3mGMmj_E5yfvFiWiKRQT8TfcVZSMxdADHyxMZ0"
+```
+
+------------------------------------------------------------------------
+
+## Rate Limiting Test
+
+``` bash
+ab -n 20 -c 1 http://192.168.58.2:32101/health
+```
+
+## Concurrent Connection Test
+
+``` bash
+ab -n 150 -c 50 http://192.168.58.2:31001/health
+```

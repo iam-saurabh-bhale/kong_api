@@ -170,8 +170,14 @@ This Kong plugin enforces IP-based rate limiting, allowing a maximum of
     policy: local
     limit_by: ip
 ```
+	
+minute: 10 – Limits each client to 10 requests per minute.
+policy: local – Counts requests on this Kong node only (use cluster for distributed counting).
+limit_by: ip – Rate limiting is applied individually per client IP.
 
 ### Kong IP Restriction
+
+This Kong plugin allows only requests from specified IP ranges (CIDR). All other client IPs are blocked, enforcing IP-based access control.
 
 ``` yaml
 - name: ip-restriction
@@ -181,13 +187,23 @@ This Kong plugin enforces IP-based rate limiting, allowing a maximum of
       - 10.244.0.67/24
 ```
 
+- allow : Only requests from these CIDR ranges are permitted.
+- Requests from any other IPs are blocked at the gateway level.
+- Ensures IP whitelisting for secure access to your APIs.
+
 ------------------------------------------------------------------------
 
 ## Envoy Connection Limit
 
+This Envoy configuration restricts the number of concurrent client connections to 50. It protects the system from connection exhaustion and basic DDoS attacks.
+
+
 ``` yaml
 max_connections: 50
 ```
+Limits the maximum number of simultaneous active connections to 50.
+Helps prevent connection flooding and reduces the risk of DDoS attacks at the edge layer.
+
 
 ------------------------------------------------------------------------
 

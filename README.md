@@ -208,7 +208,18 @@ max_connections: 50
 
 ------------------------------------------------------------------------
 
-## Helm Deployment Commands
+## Project Deployment Commands
+
+### Login to Github and Clone the Repo.
+
+### Install the Kubernetes Cluster/Minikube Cluster / Install the EKS Cluster on the AWS
+
+  Minikube Steps Ref : https://minikube.sigs.k8s.io/docs/start/
+
+- Check if all master nodes and Worker nodes are healthy.
+
+- We have implmeneted this project deployment using both K8s and Helm (Preferred).
+
 
 ### Build Microservice Docker Image
 

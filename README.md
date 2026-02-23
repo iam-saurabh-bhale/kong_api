@@ -218,7 +218,7 @@ max_connections: 50
 
 - Check if all master nodes and Worker nodes are healthy.
 
-- We have implmeneted this project deployment using both K8s and Helm (Preferred).
+- We have implemented this project deployment using Helm (Preferred).
 
 
 ### Build Microservice Docker Image

@@ -171,9 +171,9 @@ This Kong plugin enforces IP-based rate limiting, allowing a maximum of
     limit_by: ip
 ```
 	
-minute: 10 – Limits each client to 10 requests per minute.
-policy: local – Counts requests on this Kong node only (use cluster for distributed counting).
-limit_by: ip – Rate limiting is applied individually per client IP.
+- minute: 10 – Limits each client to 10 requests per minute.
+- policy: local – Counts requests on this Kong node only (use cluster for distributed counting).
+- limit_by: ip – Rate limiting is applied individually per client IP.
 
 ### Kong IP Restriction
 
@@ -201,8 +201,9 @@ This Envoy configuration restricts the number of concurrent client connections t
 ``` yaml
 max_connections: 50
 ```
-Limits the maximum number of simultaneous active connections to 50.
-Helps prevent connection flooding and reduces the risk of DDoS attacks at the edge layer.
+
+- Limits the maximum number of simultaneous active connections to 50.
+- Helps prevent connection flooding and reduces the risk of DDoS attacks at the edge layer.
 
 
 ------------------------------------------------------------------------

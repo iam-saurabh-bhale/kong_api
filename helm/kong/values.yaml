@@ -1,0 +1,67 @@
+env:
+  database: "off"
+
+dblessConfig:
+  enabled: true
+  config: |
+    _format_version: "3.0"
+
+    services:
+      - name: user-service
+        url: http://user-service.default.svc.cluster.local:8000
+        routes:
+          # Public health route
+          - name: health-route
+            paths:
+              - /health
+            strip_path: false
+
+          # Public verify route
+          - name: verify-route
+            paths:
+              - /verify
+            strip_path: false
+
+          # Login route with IP restriction and rate-limiting
+          - name: login-route
+            paths:
+              - /login
+            strip_path: false
+            plugins:
+              - name: ip-restriction
+                config:
+                  allow:
+                    - 192.168.49.0/24
+                    - 10.244.0.67/24
+              - name: rate-limiting
+                config:
+                  minute: 10
+                  policy: local
+                  limit_by: ip
+
+          # Users route (JWT)
+          - name: users-route
+            paths:
+              - /users
+            strip_path: false
+            plugins:
+              - name: rate-limiting
+                config:
+                  minute: 10
+                  policy: local
+                  limit_by: ip
+
+proxy:
+  type: NodePort
+
+admin:
+  enabled: false
+
+ingressController:
+  enabled: false
+# Consumers required for JWT plugin
+consumers:
+  - username: admin
+    jwt_secrets:
+      - key: admin-key
+        secret: "{{ .Values.jwtSecret }}"

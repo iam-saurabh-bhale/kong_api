@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: modsecurity-config
+data:
+  modsecurity.conf: |
+    SecRuleEngine On
+    SecRequestBodyAccess On
+
+    # Bypass public endpoints
+    SecRule REQUEST_URI "@beginsWith /health" \
+      "id:1000,phase:1,pass,nolog,ctl:ruleEngine=Off"
+
+    SecRule REQUEST_URI "@beginsWith /verify" \
+      "id:1001,phase:1,pass,nolog,ctl:ruleEngine=Off"
+
+    # Enable protection for protected APIs
+    SecRule REQUEST_URI "@beginsWith /login" \
+      "id:1002,phase:1,pass,ctl:ruleEngine=On"
+
+    SecRule REQUEST_URI "@beginsWith /users" \
+      "id:1003,phase:1,pass,ctl:ruleEngine=On"
+
+    # SQL Injection Protection
+    SecRule ARGS "@rx (union select|select.*from|drop table)" \
+      "id:2001,phase:2,deny,status:403,msg:'SQL Injection Attempt'"
+
+    # XSS Protection
+    SecRule ARGS "@rx (<script>|javascript:)" \
+      "id:2002,phase:2,deny,status:403,msg:'XSS Attempt'"

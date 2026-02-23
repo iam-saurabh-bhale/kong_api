@@ -1,0 +1,36 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: user-service
+    url: http://user-service.default.svc.cluster.local:8000
+    routes:
+      - name: user-route
+        paths:
+          - /api
+        strip_path: true
+
+plugins:
+  - name: jwt
+    service: user-service
+    config:
+      claims_to_verify:
+        - exp
+
+  - name: rate-limiting
+    service: user-service
+    config:
+      minute: 10
+      policy: local
+
+  - name: ip-restriction
+    service: user-service
+    config:
+      allow:
+        - 192.168.49.0/24
+
+consumers:
+  - username: admin-user
+    jwt_secrets:
+      - key: admin-key
+        secret: supersecretkey

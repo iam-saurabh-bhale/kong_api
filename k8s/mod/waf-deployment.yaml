@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong-waf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong-waf
+  template:
+    metadata:
+      labels:
+        app: kong-waf
+    spec:
+      containers:
+        - name: waf
+          image: owasp/modsecurity-crs:nginx
+          ports:
+            - containerPort: 80
+          env:
+            # Tell the image where the backend (Kong) is
+            - name: PROXY_PASS
+              value: "http://kong-kong-proxy:80"
+            # Explicitly enable the engine via env var as well
+            - name: MODSEC_RULE_ENGINE
+              value: "on"
+          volumeMounts:
+            - name: modsecurity-config
+              # This is the directory the image actually scans for .conf files
+              mountPath: /etc/modsecurity.d/owasp-crs-custom.conf 
+              subPath: modsecurity.conf
+      volumes:
+        - name: modsecurity-config
+          configMap:
+            name: modsecurity-config

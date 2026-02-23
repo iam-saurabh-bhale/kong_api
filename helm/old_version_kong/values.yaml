@@ -1,0 +1,27 @@
+env:
+  database: "off"
+
+dblessConfig:
+  enabled: true
+  config: |
+    _format_version: "3.0"
+
+    services:
+      - name: user-service
+        url: http://user-service.default.svc.cluster.local:8000
+        routes:
+          - name: user-route
+            paths:
+              - /api
+            strip_path: true
+
+proxy:
+  enabled: true
+  type: NodePort
+
+admin:
+  enabled: true
+  type: ClusterIP
+
+ingressController:
+  enabled: false

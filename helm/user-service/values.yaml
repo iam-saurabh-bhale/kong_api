@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: user-service
+  tag: latest
+  pullPolicy: Never
+
+service:
+  type: ClusterIP
+  port: 8000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000

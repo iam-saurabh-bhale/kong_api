@@ -53,7 +53,7 @@ Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
     │   │   │       ├── handler.lua
     │   │   │       └── schema.lua
     │   │   └── values.yaml
-    │   ├── old_version_kong
+    │   ├── old_version_kong	 # This folder created for testing of Old Kong
     │   │   ├── kong.yaml
     │   │   ├── plugins
     │   │   │   └── custom
@@ -95,7 +95,7 @@ Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
     │   │   └── Dockerfile
     │   └── Dockerfile
     ├── README.md
-    └── terraform
+    └── terraform   		# please use this folder 
         └── main.tf
 
 ------------------------------------------------------------------------

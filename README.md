@@ -53,7 +53,7 @@ Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
     │   │   │       ├── handler.lua
     │   │   │       └── schema.lua
     │   │   └── values.yaml
-    │   ├── old_version_kong	 # This folder created for testing of Old Kong
+    │   ├── old_version_kong	 					# This folder created for testing of Old Kong
     │   │   ├── kong.yaml
     │   │   ├── plugins
     │   │   │   └── custom
@@ -67,7 +67,7 @@ Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
     │       │   ├── _helpers.tpl
     │       │   └── service.yaml
     │       └── values.yaml
-    ├── k8s
+    ├── k8s											# We have used helm for all deployments so Please skip this folder
     │   ├── deployment.yaml
     │   ├── envoy
     │   │   ├── deploy.yaml
@@ -76,17 +76,17 @@ Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
     │       ├── modsecurity-config.yaml
     │       ├── waf-deployment.yaml
     │       └── waf-service.yaml
-    ├── kong
+    ├── kong  										# Use this file if we are deploying the Kong Manually
     │   ├── kong.yaml
     │   └── plugins
     │       └── custom.lua
-    ├── microservice
+    ├── microservice								# Application Code
     │   ├── app
     │   │   ├── auth.py
     │   │   ├── db.py
     │   │   ├── main.py
     │   │   └── requirements.txt
-    │   ├── backup
+    │   ├── backup									# Old Application
     │   │   ├── app
     │   │   │   ├── auth.py
     │   │   │   ├── db.py
@@ -95,7 +95,7 @@ Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
     │   │   └── Dockerfile
     │   └── Dockerfile
     ├── README.md
-    └── terraform   		# please use this folder 
+    └── terraform   		# please don't use this folder as we are using Minikube
         └── main.tf
 
 ------------------------------------------------------------------------

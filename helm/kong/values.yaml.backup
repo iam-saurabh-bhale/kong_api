@@ -22,12 +22,6 @@ dblessConfig:
             paths:
               - /verify
             strip_path: false
-            plugins:
-              - name: jwt
-                config:
-                  claims_to_verify:
-                    - exp
-                  anonymous: showcase-user   # 👈 allows fallback
 
           # Login route with IP restriction and rate-limiting
           - name: login-route
@@ -39,7 +33,6 @@ dblessConfig:
                 config:
                   allow:
                     - 192.168.49.0/24
-                    - 10.244.0.5
               - name: rate-limiting
                 config:
                   minute: 10

@@ -33,7 +33,7 @@ def login(payload: dict):
 
 @app.get("/verify")
 def verify_public():
-    return {"message": "public verify endpoint"}
+    return {"message": "token verified"}
 
 @app.get("/users")
 def get_users(credentials: HTTPAuthorizationCredentials = Depends(security)):

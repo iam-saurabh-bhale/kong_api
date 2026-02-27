@@ -205,6 +205,9 @@ max_connections: 50
 - Limits the maximum number of simultaneous active connections to 50.
 - Helps prevent connection flooding and reduces the risk of DDoS attacks at the edge layer.
 
+- <img width="914" height="420" alt="image" src="https://github.com/user-attachments/assets/ac51462d-32d7-46e4-8f75-2f04ae5d32d6" />
+
+
 
 ------------------------------------------------------------------------
 

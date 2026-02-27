@@ -239,7 +239,7 @@ helm install user-service .
 ### Deploy Kong
 
 ``` bash
-helm upgrade kong kong/kong -f values.yaml --set jwtSecret=admin123
+helm install kong kong/kong -f values.yaml --set jwtSecret=admin123
 ```
 
 ### Deploy Envoy

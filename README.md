@@ -17,7 +17,7 @@ It demonstrates:
 
 ------------------------------------------------------------------------
 
-## Architecture
+## Basic Architecture/Flow
 
 Client → Envoy → Kong Gateway → User Microservice (FastAPI + SQLite)
 

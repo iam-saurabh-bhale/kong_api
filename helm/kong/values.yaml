@@ -45,6 +45,11 @@ dblessConfig:
                   minute: 10
                   policy: local
                   limit_by: ip
+              - name: jwt
+                config:
+                  claims_to_verify:
+                    - exp
+                  anonymous: showcase-user
 
           # Users route (JWT + Rate Limit Showcase)
           - name: users-route

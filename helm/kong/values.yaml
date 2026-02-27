@@ -39,7 +39,7 @@ dblessConfig:
                 config:
                   allow:
                     - 192.168.49.0/24
-                    - 10.244.0.5
+                    - 10.244.0.8
               - name: rate-limiting
                 config:
                   minute: 10

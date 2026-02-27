@@ -254,7 +254,6 @@ helm upgrade --install envoy ./envoy-chart   --namespace default   --set service
 
 ``` bash
 curl -i http://192.168.58.2:32101/health
-curl -i http://192.168.58.2:32101/verify
 ```
 
 ``` bash
@@ -265,6 +264,9 @@ curl -s -X POST http://192.168.58.2:32101/login   -H "Content-Type: application/
 curl -i http://192.168.58.2:32504/users   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3MTg0ODY2Nn0.WEdqM3mGMmj_E5yfvFiWiKRQT8TfcVZSMxdADHyxMZ0"
 ```
 
+``` bash
+curl -i http://192.168.58.2:32504/verify   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3MTg0ODY2Nn0.WEdqM3mGMmj_E5yfvFiWiKRQT8TfcVZSMxdADHyxMZ0"
+```
 ------------------------------------------------------------------------
 
 ## Rate Limiting Test

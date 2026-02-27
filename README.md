@@ -245,7 +245,7 @@ helm install kong kong/kong -f values.yaml --set jwtSecret=admin123
 ### Deploy Envoy
 
 ``` bash
-helm install --install envoy ./envoy-chart   --namespace default   --set service.nodePort=31001   --set replicaCount=1
+helm upgrade --install envoy ./envoy-chart   --namespace default   --set service.nodePort=31001   --set replicaCount=1
 ```
 
 ------------------------------------------------------------------------
